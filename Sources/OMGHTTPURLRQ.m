@@ -31,6 +31,10 @@ static inline NSMutableURLRequest *OMGMutableURLRequest() {
 }
 
 - (void)add:(NSData *)payload :(NSString *)name :(NSString *)filename :(NSString *)contentType {
+    if (body.length) {
+        [body appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    
     id ln1 = [NSString stringWithFormat:@"--%@\r\n", boundary];
     id ln2 = ({
         id s = [NSMutableString stringWithString:@"Content-Disposition: form-data; "];
@@ -43,11 +47,10 @@ static inline NSMutableURLRequest *OMGMutableURLRequest() {
         [s appendString:@"\r\n"];
         s;
     });
-
+    
     [body appendData:[ln1 dataUsingEncoding:NSUTF8StringEncoding]];
     [body appendData:[ln2 dataUsingEncoding:NSUTF8StringEncoding]];
     [body appendData:payload];
-    [body appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
 - (void)addFile:(NSData *)payload parameterName:(NSString *)name filename:(NSString *)filename contentType:(NSString *)contentType
